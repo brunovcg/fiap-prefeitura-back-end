@@ -7,7 +7,6 @@ from rest_framework import status
 from .serializers import BuildingsSerializer
 from .models import Buildings
 from random import randint
-from django.core.exceptions import ObjectDoesNotExist
 
 class BuildingsView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -66,7 +65,6 @@ class BuildingsView(APIView):
         
 
     def delete(self, request):
-
       try:
         matricula = request.data['matricula']
         user_id = request.data['user']
@@ -111,7 +109,7 @@ class BuildingsView(APIView):
         return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
 
 class NeighborhoodView(APIView):
-
+    #  ROTA DESPROTEGIDA PARA FINS DE TESTES
     def get(self, request):
       neighborhood =[{'id' : 1, 'name' : 'Madalena'}, {'id' : 2, 'name' : 'Boa Viagem'}, {'id' : 3, 'name' : 'Casa Forte'}, {'id' : 1, 'name' : 'Torre'}]
       return Response( neighborhood,status=status.HTTP_200_OK)

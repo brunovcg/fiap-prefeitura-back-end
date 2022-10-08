@@ -5,7 +5,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
-from .serializers import UserSerializer
+from .serializers import UserSerializer, AllUserSerializer
 
 class LoginView(APIView):
 
@@ -21,7 +21,7 @@ class LoginView(APIView):
               user_logged = User.objects.get(username=username)
 
 
-              return Response({'token': token.key,  "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email, "persona" : user_logged.persona }, status=status.HTTP_200_OK)
+              return Response({'token': token.key, "id": user_logged.id, "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email, "persona" : user_logged.persona }, status=status.HTTP_200_OK)
         except KeyError:
           return Response({"message": "missing cpf or password"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "wrong cpf or password"}, status=status.HTTP_401_UNAUTHORIZED)
@@ -56,3 +56,10 @@ class PersonasView(APIView):
   def get(self, request):
     persona = [{'id':1, 'name': 'Impostos' }, {'id':2, 'name': 'Notícias' }, {'id':3, 'name': 'Regulamentação' }]
     return Response(persona, status=status.HTTP_200_OK)
+
+
+class UserView(APIView):
+ def get(self,request):
+   users = User.objects.all()
+   serialized = AllUserSerializer(users, many=True)
+   return Response(serialized.data,status=status.HTTP_200_OK)

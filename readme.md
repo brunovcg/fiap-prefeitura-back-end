@@ -91,6 +91,8 @@ Essa aplicação trata os erros permissão e autenticação, cadastro de usuári
 
 ### Rotas
 
+obs - o arquivo 'Insomnia_FIAP-prefeitura.json' anexo a esse projeto no diretório raiz pode ser carregado no Insomnia para gerar as rotas e suas settings.
+
 #### POST - /api/signup/ - Criar Usuário
 
 ##### Exemplo de corpo da Request

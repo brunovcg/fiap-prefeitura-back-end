@@ -7,6 +7,12 @@ Grupo G:
 - Rafael Kimihiro Moribe
 - Tiago Vieira Cavalcante
 
+## Intro
+
+Esse projeto faz parte da 3a entrega para o curso de MBA FIAP, trata-se de um protótipo de back-end em DJANGO.
+Uma API para conectar a um front-end em React.JS. Aqui faremos um CRUD para imóveis dos usuários, além de receber algumas listas que serão
+renderizadas pelo front-end para auxiliar nos cadastros.
+
 ## Pré-requisitos
 
 - Para iniciar o projeto você precisa ter o Python (versão 3) e o GIT instalados em seu computador.

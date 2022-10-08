@@ -10,26 +10,24 @@ from .serializers import UserSerializer
 class LoginView(APIView):
 
     def post(self, request):
+        try:
+          username= request.data['username']
+          password = request.data['password']
+          user = authenticate(username=username, password=password)
 
-        username= request.data['username']
-        password = request.data['password']
-        user = authenticate(username=username, password=password)
+          if user:
+              token = Token.objects.get_or_create(user=user)[0]
 
-        if user:
-            token = Token.objects.get_or_create(user=user)[0]
-
-            user_logged = User.objects.get(username=username)
+              user_logged = User.objects.get(username=username)
 
 
-            return Response({'token': token.key,  "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email })
-
+              return Response({'token': token.key,  "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email, "persona" : user_logged.persona }, status=status.HTTP_200_OK)
+        except KeyError:
+          return Response({"message": "missing cpf or password"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "wrong cpf or password"}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 class SignupView(APIView):
-
     def post(self, request):     
-
         try:
             new_user =  User.objects.create_user(
                 username = request.data["username"],
@@ -40,8 +38,21 @@ class SignupView(APIView):
             )
 
         except IntegrityError:
-            return Response({"User already exists"},status=status.HTTP_409_CONFLICT)
+            return Response({'message': 'User already exists'},status=status.HTTP_409_CONFLICT)
+
+        except KeyError:
+           missing = []
+           check = ['username', 'email', 'password', 'telefone', 'name']
+
+           for data in check:
+            if  data not in request.data:
+              missing.append(data)
+           return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
 
         serialized = UserSerializer(new_user)
-
         return Response(serialized.data, status=status.HTTP_201_CREATED)
+
+class PersonasView(APIView):
+  def get(self, request):
+    persona = [{'id':1, 'name': 'Impostos' }, {'id':2, 'name': 'Notícias' }, {'id':3, 'name': 'Regulamentação' }]
+    return Response(persona, status=status.HTTP_200_OK)

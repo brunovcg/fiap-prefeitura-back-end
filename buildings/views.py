@@ -7,70 +7,112 @@ from rest_framework import status
 from .serializers import BuildingsSerializer
 from .models import Buildings
 from random import randint
+from django.core.exceptions import ObjectDoesNotExist
 
 class BuildingsView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-      user_id= request.data['user']
-      buildings = Buildings.objects.filter(user=user_id)
-      serialized = BuildingsSerializer(buildings, many=True)
+      try:
+        user_id= request.data['user']
+        buildings = Buildings.objects.filter(user=user_id)
+        serialized = BuildingsSerializer(buildings, many=True)
+      except KeyError:
+        missing = []
+        check = ['user']
+        for data in check:
+         if  data not in request.data:
+           missing.append(data)
+        return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
 
       return Response(serialized.data,status=status.HTTP_200_OK)
 
 
     def post(self, request):
+      try:
+        def generateMatricula():
+          genId = randint(100000,900000)
+          exists = Buildings.objects.filter(matricula= genId).exists()
+          if not exists:
+            return genId
+          else:
+            generateMatricula()
 
-      input_data = {
-        'matricula' : randint(100000000000,999999999999),
-        'user': request.data['user'],
-	      'tamanho' : request.data['tamanho'],
-	      'endereco': request.data['endereco'],
-	      'bairro' : request.data['bairro'],
-      }
+        matricula = generateMatricula()
 
-      serialized = BuildingsSerializer(data=input_data)
-      if serialized.is_valid():
-        serialized.save()
-        return  Response(serialized.data, status=status.HTTP_201_CREATED)
+        input_data = {
+          'matricula' : matricula,
+          'user': request.data['user'],
+	        'tamanho' : request.data['tamanho'],
+	        'endereco': request.data['endereco'],
+	        'bairro' : request.data['bairro'],
+        }
 
-      else:   
-        return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+        serialized = BuildingsSerializer(data=input_data)
+        if serialized.is_valid():
+          serialized.save()
+          return  Response(serialized.data, status=status.HTTP_201_CREATED)
 
+        else:   
+          return Response(serialized.errors, status=status.HTTP_400_BAD_REQUEST)
+      except KeyError:
+        missing = []
+        check = ['user', 'tamanho', 'endereco', 'bairro']
+        for data in check:
+         if  data not in request.data:
+           missing.append(data)
+        return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
+        
 
     def delete(self, request):
-      matricula = request.data['matricula']
-      user_id = request.data['user']
-      building = get_object_or_404(Buildings, matricula=matricula)
 
-      if user_id != building.user.id:
-        return Response ( {'message' : 'User can only delete it owns buildings'}, status=status.HTTP_401_UNAUTHORIZED)
+      try:
+        matricula = request.data['matricula']
+        user_id = request.data['user']
+        building = get_object_or_404(Buildings, matricula=matricula)
 
-      building.delete()
-  
-      return Response({'message' : f"Building {matricula} deleted"},status=status.HTTP_200_OK)
+        if user_id != building.user.id:
+          return Response ( {'message' : 'User can only delete it owns buildings'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        building.delete()
+
+        return Response({'message' : f"Building {matricula} deleted"},status=status.HTTP_200_OK)
+      except KeyError:
+        missing = []
+        check = ['user', 'matricula']
+        for data in check:
+         if  data not in request.data:
+           missing.append(data)
+        return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
 
 
     def patch(self, request):
-      matricula = request.data['matricula']
-      user_id = request.data['user']
+      try:
+       matricula = request.data['matricula']
+       user_id = request.data['user']
 
-      building = get_object_or_404(Buildings, matricula=matricula)
+       building = get_object_or_404(Buildings, matricula=matricula)
 
-      if user_id != building.user.id:
-        return Response ( {'message' : 'User can only delete it owns buildings'}, status=status.HTTP_401_UNAUTHORIZED)
+       if user_id != building.user.id:
+         return Response ( {'message' : 'User can only delete it owns buildings'}, status=status.HTTP_401_UNAUTHORIZED)
 
-      serialized = BuildingsSerializer(building, request.data, partial=True)
+       serialized = BuildingsSerializer(building, request.data, partial=True)
 
-      if serialized.is_valid():
-            serialized.save()
-            return Response(serialized.data, status=status.HTTP_200_OK)
+       if serialized.is_valid():
+             serialized.save()
+             return Response(serialized.data, status=status.HTTP_200_OK)
+      except KeyError:
+        missing = []
+        check = ['user', 'matricula']
+        for data in check:
+         if  data not in request.data:
+           missing.append(data)
+        return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
 
 class NeighborhoodView(APIView):
 
     def get(self, request):
-      neighborhood = { 'data' : [{'id' : 1, 'name' : 'Madalena'}, {'id' : 2, 'name' : 'Boa Viagem'}, {'id' : 3, 'name' : 'Casa Forte'}, {'id' : 1, 'name' : 'Torre'}]}
+      neighborhood =[{'id' : 1, 'name' : 'Madalena'}, {'id' : 2, 'name' : 'Boa Viagem'}, {'id' : 3, 'name' : 'Casa Forte'}, {'id' : 1, 'name' : 'Torre'}]
       return Response( neighborhood,status=status.HTTP_200_OK)
    

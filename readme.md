@@ -1,5 +1,12 @@
 # FIAP - PREFEITURA BACK-END
 
+Grupo G:
+
+- Ana Sofia Nunes de Abreu
+- Bruno Vieira Campos Gouveia
+- Rafael Kimihiro Moribe
+- Tiago Vieira Cavalcante
+
 ## Pré-requisitos
 
 - Para iniciar o projeto você precisa ter o Python (versão 3) e o GIT instalados em seu computador.

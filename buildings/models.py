@@ -6,4 +6,4 @@ class Buildings (models.Model):
     tamanho = models.IntegerField(null=False)
     endereco = models.CharField(max_length=255, null=False)
     bairro = models.CharField(max_length=255, null=False)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="buildings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="buildings")

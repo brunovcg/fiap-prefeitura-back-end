@@ -7,25 +7,28 @@ from rest_framework import status
 from .serializers import BuildingsSerializer
 from .models import Buildings
 from random import randint
+from accounts.models import User
+
+
+
+class UserBuildingsView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id=""):
+
+      get_object_or_404(User, id= user_id)
+
+      buildings = Buildings.objects.filter(user=user_id)
+      serialized = BuildingsSerializer(buildings, many=True)
+
+      return Response(serialized.data,status=status.HTTP_200_OK)
+
+
 
 class BuildingsView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-      try:
-        user_id= request.data['user']
-        buildings = Buildings.objects.filter(user=user_id)
-        serialized = BuildingsSerializer(buildings, many=True)
-      except KeyError:
-        missing = []
-        check = ['user']
-        for data in check:
-         if  data not in request.data:
-           missing.append(data)
-        return Response({'message': {'missing_fields' : missing}},status=status.HTTP_400_BAD_REQUEST)
-
-      return Response(serialized.data,status=status.HTTP_200_OK)
 
 
     def post(self, request):

@@ -6,9 +6,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
 from .serializers import UserSerializer, AllUserSerializer
+from django.shortcuts import get_object_or_404
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class LoginView(APIView):
-
     def post(self, request):
         try:
           username= request.data['username']
@@ -35,6 +37,7 @@ class SignupView(APIView):
                 password = request.data["password"],
                 telefone = request.data["telefone"],
                 name = request.data["name"],
+                persona = request.data["persona"],
             )
 
         except IntegrityError:
@@ -42,7 +45,7 @@ class SignupView(APIView):
 
         except KeyError:
            missing = []
-           check = ['username', 'email', 'password', 'telefone', 'name']
+           check = ['username', 'email', 'password', 'telefone', 'name', 'persona']
 
            for data in check:
             if  data not in request.data:
@@ -58,8 +61,23 @@ class PersonasView(APIView):
     return Response(persona, status=status.HTTP_200_OK)
 
 
-class UserView(APIView):
+class AllUsersView(APIView):
  def get(self,request):
    users = User.objects.all()
    serialized = AllUserSerializer(users, many=True)
+   return Response(serialized.data,status=status.HTTP_200_OK)
+
+class UserView(APIView):
+ authentication_classes = [TokenAuthentication]
+ permission_classes = [IsAuthenticated]
+ def get(self,request, user_id=""):
+   user =  get_object_or_404(User, id=user_id)
+   request_user_id = request.user.id
+
+    
+
+   if user_id !=request_user_id:
+    return Response({"message": "User can only request it own information"}, status=status.HTTP_401_UNAUTHORIZED)
+
+   serialized = AllUserSerializer(user)
    return Response(serialized.data,status=status.HTTP_200_OK)

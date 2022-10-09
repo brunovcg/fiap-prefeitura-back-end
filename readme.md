@@ -248,7 +248,9 @@ obs - o arquivo 'Insomnia_FIAP-prefeitura.json' anexo a esse projeto no diretór
 }
 ```
 
-#### GET - buildings/ - Listar imóveis do usuário
+#### GET - buildings/:user_id - Listar imóveis do usuário
+
+Obs: params user_id necessário
 
 ##### Authentication
 
@@ -259,11 +261,7 @@ obs - o arquivo 'Insomnia_FIAP-prefeitura.json' anexo a esse projeto no diretór
 
 ##### Exemplo de corpo da Request
 
-```json
-{
-  "user": 1
-}
-```
+- Sem corpo de request
 
 ##### Responses
 
@@ -463,3 +461,73 @@ obs: Os campos user e matricula são obrigatórios para localizar o imóvel e o 
   }
 }
 ```
+
+#### GET - users/ - Listar todos os usuários
+
+##### Authentication
+
+- Num cenário real, teria acesso a essa rota apenas "super_user" autenticados, para fins acadêmicos ela está liberada para consultarmos facilmente o banco.
+
+##### Exemplo de corpo da Request
+
+- Sem corpo de request
+
+##### Responses
+
+- STATUS 200 OK
+
+```json
+[
+  {
+    "id": 3,
+    "last_login": null,
+    "is_superuser": false,
+    "username": "12345678986",
+    "first_name": "",
+    "last_name": "",
+    "email": "brunovcg@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-10-08T21:56:58.828910Z",
+    "name": "Bruno Vieira Campos Gouveia",
+    "telefone": "+5581994791589",
+    "persona": ""
+  },
+  {
+    "id": 4,
+    "last_login": null,
+    "is_superuser": false,
+    "username": "rm344446",
+    "first_name": "",
+    "last_name": "",
+    "email": "veragouveia04@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-10-08T22:00:01.117586Z",
+    "name": "Vera Lucia Vieira Gouveia",
+    "telefone": "81988337329",
+    "persona": ""
+  },
+  {
+    "id": 5,
+    "last_login": null,
+    "is_superuser": false,
+    "username": "1234",
+    "first_name": "",
+    "last_name": "",
+    "email": "veragouveia04@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-10-08T22:05:18.246487Z",
+    "name": "1234",
+    "telefone": "1234",
+    "persona": ""
+  }
+]
+```
+
+#### GET - user/:user_id - Listar um único usuário
+
+##### Authentication
+
+- O usuário somente poderá executar com sucesso o request se tiver com seu token e e o param user_id for igual ao seu id do Token

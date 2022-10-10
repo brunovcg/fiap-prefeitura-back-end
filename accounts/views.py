@@ -70,14 +70,10 @@ class AllUsersView(APIView):
 class UserView(APIView):
  authentication_classes = [TokenAuthentication]
  permission_classes = [IsAuthenticated]
- def get(self,request, user_id=""):
+
+ def get(self,request,):
+   user_id = request.user.id
    user =  get_object_or_404(User, id=user_id)
-   request_user_id = request.user.id
-
-    
-
-   if user_id !=request_user_id:
-    return Response({"message": "User can only request it own information"}, status=status.HTTP_401_UNAUTHORIZED)
 
    serialized = AllUserSerializer(user)
    return Response(serialized.data,status=status.HTTP_200_OK)

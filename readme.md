@@ -85,6 +85,7 @@ O servidor iniciará em localhost:8000
 ### Erros e exceções
 
 Essa aplicação trata os erros permissão e autenticação, cadastro de usuário com CPF (username) em duplicata, verifica se o objeto existe no banco para deletar ou alterá-lo, se todos os campos setados como não nulos existem na request, etc.
+Além disso, utiliza do token para verificar quem é o usuário que fez o request e se este tem permissão para fazer as acões, por exemplo, um usuário so pode editar / deletar seu proóprio imóvel.
 
 #### Exemplo erro de token authentication
 
@@ -190,7 +191,7 @@ obs - o arquivo 'Insomnia_FIAP-prefeitura.json' anexo a esse projeto no diretór
 }
 ```
 
-#### GET - /api/personas/ - Listar Personar
+#### GET - /api/personas/ - Listar Personas
 
 ##### Exemplo de corpo da Request
 
@@ -248,15 +249,15 @@ obs - o arquivo 'Insomnia_FIAP-prefeitura.json' anexo a esse projeto no diretór
 }
 ```
 
-#### GET - buildings/:user_id - Listar imóveis do usuário
+#### GET - buildings/ - Listar imóveis do usuário
 
-Obs: params user_id necessário
+Obs: O usuário é reconhecido por seu Token
 
 ##### Authentication
 
 - O usuário somente poderá executar com sucesso o request se for o dono do imóvel
 - Rota Autenticada com Token
-  No header da request usar:8000
+  No header da request usar:
   Authorization : Token hash_do_token
 
 ##### Exemplo de corpo da Request
@@ -320,14 +321,13 @@ Obs: params user_id necessário
 
 - O usuário somente poderá executar com sucesso o request se for o dono do imóvel
 - Rota Autenticada com Token
-  No header da request usar:8000
+  No header da request usar:
   Authorization : Token hash_do_token
 
 ##### Exemplo de corpo da Request
 
 ```json
 {
-  "user": 1,
   "tamanho": 123,
   "endereco": "Av Boa Viagem",
   "bairro": "Madalena"
@@ -359,24 +359,22 @@ Obs: params user_id necessário
 }
 ```
 
-#### UPDATE - buildings/ - Editar imóvel do usuário
+#### PATCH - buildings/matricula/<int:matricula> - Editar imóvel do usuário
 
 ##### Authentication
 
 - O usuário somente poderá executar com sucesso o request se for o dono do imóvel
 - Rota Autenticada com Token
-  No header da request usar:8000
+  No header da request usar:
   Authorization : Token hash_do_token
 
 ##### Exemplo de corpo da Request
 
-obs: Os campos user e matricula são obrigatórios para localizar o imóvel, os demais pode-se utilizar apenas
-o que se deseja alterar.
+obs: A matricula é enviado como query param e o user decodificado pelo token, Colocar os campos que deseja alterar.
+Somente usar : ['tamanho', 'endereco', 'bairro'].
 
 ```json
 {
-  "user": 1,
-  "matricula": 254135,
   "bairro": "Boa Viagem"
 }
 ```
@@ -408,31 +406,32 @@ o que se deseja alterar.
 
 ```json
 {
-  "message": {
-    "missing_fields": ["matricula"]
-  }
+  "message": "User need to set in request body at least one of the fields: ['tamanho', 'endereco', 'bairro']"
 }
 ```
 
-#### DELETE - buildings/ - Deletar imóvel do usuários
+OU
 
-obs: Os campos user e matricula são obrigatórios para localizar o imóvel e o deletar.
+```json
+{
+  "message": "User can only change: ['tamanho', 'endereco', 'bairro']"
+}
+```
+
+#### DELETE - buildings/matricula/<int:matricula> - Deletar imóvel do usuário
+
+obs: O campo matricula e enviado como query params.
 
 ##### Authentication
 
 - O usuário somente poderá executar com sucesso o request se for o dono do imóvel
 - Rota Autenticada com Token
-  No header da request usar:8000
+  No header da request usar:
   Authorization : Token hash_do_token
 
 ##### Exemplo de corpo da Request
 
-```json
-{
-  "matricula": "423423487",
-  "user": 1
-}
-```
+- Sem corpo de request
 
 ##### Responses
 
@@ -449,16 +448,6 @@ obs: Os campos user e matricula são obrigatórios para localizar o imóvel e o 
 ```json
 {
   "detail": "Not found."
-}
-```
-
-- STATUS 400 BAD REQUEST
-
-```json
-{
-  "message": {
-    "missing_fields": ["matricula"]
-  }
 }
 ```
 
@@ -526,8 +515,32 @@ obs: Os campos user e matricula são obrigatórios para localizar o imóvel e o 
 ]
 ```
 
-#### GET - user/:user_id - Listar um único usuário
+#### GET - user/ - Listar um único usuário
 
 ##### Authentication
 
-- O usuário somente poderá executar com sucesso o request se tiver com seu token e e o param user_id for igual ao seu id do Token
+- O USER ID é decodificado do token
+
+##### Exemplo de corpo da Request
+
+- Sem corpo de request
+
+##### Responses
+
+```json
+{
+  "id": 7,
+  "last_login": null,
+  "is_superuser": false,
+  "username": "1111",
+  "first_name": "",
+  "last_name": "",
+  "email": "aluno@fiap.com.br",
+  "is_staff": false,
+  "is_active": true,
+  "date_joined": "2022-10-08T22:33:24.250355Z",
+  "name": "alun21o",
+  "telefone": "5986954869546",
+  "persona": ""
+}
+```

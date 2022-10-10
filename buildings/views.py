@@ -110,6 +110,6 @@ class BuildingsView(APIView):
 class NeighborhoodView(APIView):
     # TODO ROTA MOCKADA PARA POSTERIOR DESENVOLVIMENTO
     def get(self, request):
-      neighborhood =[{'id' : 1, 'name' : 'Madalena'}, {'id' : 2, 'name' : 'Boa Viagem'}, {'id' : 3, 'name' : 'Casa Forte'}, {'id' : 1, 'name' : 'Torre'}]
+      neighborhood =[{'id' : 1, 'name' : 'Madalena'}, {'id' : 2, 'name' : 'Boa Viagem'}, {'id' : 3, 'name' : 'Casa Forte'}, {'id' : 4, 'name' : 'Torre'}]
       return Response( neighborhood,status=status.HTTP_200_OK)
    

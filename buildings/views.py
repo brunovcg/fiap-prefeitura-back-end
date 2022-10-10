@@ -32,7 +32,7 @@ class OneBuildingsView(APIView):
 
       for field in request.data:
         if field not in fields:
-          return Response ( {'message': f'User can only change: {fields}' }, status=status.HTTP_400_BAD_REQUEST)
+          return Response ( {'message': f'User can only change: {fields}, {field} not allowed' }, status=status.HTTP_400_BAD_REQUEST)
 
       user_id = request.user.id
       building = get_object_or_404(Buildings, matricula=matricula)
@@ -61,6 +61,18 @@ class BuildingsView(APIView):
 
     def post(self, request):
       try:
+        def generate_iptu():
+          bairro = request.data["bairro"]
+          tamanho = request.data["tamanho"]
+          if (bairro == 1):
+            return tamanho * 2
+          if (bairro == 2):
+            return tamanho * 2.5
+          if (bairro == 3):
+            return tamanho * 2.7
+          else:
+            return tamanho * 2.4
+        
         def generateMatricula():
           genId = randint(100000,900000)
           exists = Buildings.objects.filter(matricula= genId).exists()
@@ -73,6 +85,7 @@ class BuildingsView(APIView):
 
         input_data = {
           'matricula' : matricula,
+          'iptu': generate_iptu() ,
           'user': request.user.id,
 	        'tamanho' : request.data['tamanho'],
 	        'endereco': request.data['endereco'],

@@ -23,7 +23,7 @@ class LoginView(APIView):
               user_logged = User.objects.get(username=username)
 
 
-              return Response({'token': token.key, "id": user_logged.id, "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email, "persona" : user_logged.persona }, status=status.HTTP_200_OK)
+              return Response({'token': token.key, "name": user_logged.name ,"id": user_logged.id, "username" : user_logged.username, "telefone" : user_logged.telefone, "email" : user_logged.email, "persona" : user_logged.persona }, status=status.HTTP_200_OK)
         except KeyError:
           return Response({"message": "missing cpf or password"}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"message": "wrong cpf or password"}, status=status.HTTP_401_UNAUTHORIZED)

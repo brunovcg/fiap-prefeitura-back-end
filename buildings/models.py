@@ -6,4 +6,6 @@ class Buildings (models.Model):
     tamanho = models.IntegerField(null=False)
     endereco = models.CharField(max_length=255, null=False)
     bairro = models.CharField(max_length=255, null=False)
+    iptu = models.FloatField(null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="buildings")
+   

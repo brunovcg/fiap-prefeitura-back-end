@@ -385,11 +385,12 @@ Somente usar : ['tamanho', 'endereco', 'bairro'].
 
 ```json
 {
-  "id": 2,
-  "matricula": 254135,
+  "id": 1,
+  "matricula": 799256,
   "tamanho": 123,
   "endereco": "Av Boa Viagem",
-  "bairro": "Boa Viagem",
+  "bairro": "Madalena",
+  "iptu": 295.2,
   "user": 1
 }
 ```
@@ -480,7 +481,7 @@ obs: O campo matricula e enviado como query params.
     "date_joined": "2022-10-08T21:56:58.828910Z",
     "name": "Bruno Vieira Campos Gouveia",
     "telefone": "+5581994791589",
-    "persona": ""
+    "persona": 1
   },
   {
     "id": 4,
@@ -495,7 +496,7 @@ obs: O campo matricula e enviado como query params.
     "date_joined": "2022-10-08T22:00:01.117586Z",
     "name": "Vera Lucia Vieira Gouveia",
     "telefone": "81988337329",
-    "persona": ""
+    "persona": 2
   },
   {
     "id": 5,
@@ -510,7 +511,7 @@ obs: O campo matricula e enviado como query params.
     "date_joined": "2022-10-08T22:05:18.246487Z",
     "name": "1234",
     "telefone": "1234",
-    "persona": ""
+    "persona": 3
   }
 ]
 ```
